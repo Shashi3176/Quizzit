@@ -1,0 +1,297 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+generator erd {
+  provider = "prisma-erd-generator"
+  output   = "scheme.svg"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                    Int           @id @default(autoincrement())
+  username              String
+  email                 String        @unique
+  password              String
+  hostedRooms           QuizRoom[]     @relation("HostToRooms")
+  moderatedRooms        QuizRoom[]     @relation("ModeratorToRooms")
+  hostedGuessItRooms    GuessItRoom[]  @relation("HostToGuessItRooms")
+  moderatedGuessItRooms GuessItRoom[]  @relation("ModeratorToGuessItRooms")
+  hostedThe100Rooms     The100Room[]   @relation("HostToThe100Rooms")
+  moderatedThe100Rooms  The100Room[]   @relation("ModeratorToThe100Rooms")
+  hostedTypeItRooms     TypeItRoom[]   @relation("HostToTypeItRooms")
+  moderatedTypeItRooms  TypeItRoom[]   @relation("ModeratorToTypeItRooms")
+}
+
+model QuizRoom {
+  id              Int             @id @default(autoincrement())
+  hostId          Int
+  title           String
+  desc            String
+  user_password   String
+  mod_password    String
+  isLocked        Boolean         @default(false)
+  currentQuestion Int             @default(0)
+  participants    Participant[]
+  questions       Question[]
+  analytics       QuizAnalytics[]
+  host            User            @relation("HostToRooms", fields: [hostId], references: [id])
+  moderators      User[]          @relation("ModeratorToRooms")
+}
+
+model Question {
+  id                 Int                 @id @default(autoincrement())
+  quizRoomId         Int
+  order              Int
+  text               String
+  imageUrl           String?
+  options            Json?
+  correctAnswer      Json
+  points             Int                 @default(100)
+  timeLimit          Int                 @default(30)
+  explanation        String?
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+  participantAnswers ParticipantAnswer[]
+  quizRoom           QuizRoom            @relation(fields: [quizRoomId], references: [id], onDelete: Cascade)
+  analytics          QuizAnalytics?
+
+  @@unique([quizRoomId, order])
+}
+
+model Participant {
+  id             Int                 @id @default(autoincrement())
+  quizRoomId     Int?
+  guessItRoomId  Int?
+  the100RoomId   Int?
+  typeItRoomId   Int?
+  userId         String
+  name           String
+  score          Int                 @default(0)
+  rank           Int?
+  quizRoom       QuizRoom?           @relation(fields: [quizRoomId], references: [id], onDelete: Cascade)
+  guessItRoom    GuessItRoom?        @relation(fields: [guessItRoomId], references: [id], onDelete: Cascade)
+  the100Room     The100Room?         @relation(fields: [the100RoomId], references: [id], onDelete: Cascade)
+  typeItRoom     TypeItRoom?         @relation(fields: [typeItRoomId], references: [id], onDelete: Cascade)
+  answers        ParticipantAnswer[]
+  guessItAnswers GuessItAnswer[]
+  the100Answers  The100Answer[]
+  typeItAnswers  TypeItAnswer[]
+  performance    PerformanceCard?
+
+  @@unique([userId, quizRoomId])
+  @@unique([userId, guessItRoomId])
+  @@unique([userId, the100RoomId])
+  @@unique([userId, typeItRoomId])
+}
+
+model ParticipantAnswer {
+  id            Int         @id @default(autoincrement())
+  participantId Int
+  questionId    Int
+  answer        Json
+  isCorrect     Boolean
+  responseTime  Float
+  score         Int
+  createdAt     DateTime    @default(now())
+  participant   Participant @relation(fields: [participantId], references: [id], onDelete: Cascade)
+  question      Question    @relation(fields: [questionId], references: [id], onDelete: Cascade)
+}
+
+model QuizAnalytics {
+  id                  Int      @id @default(autoincrement())
+  quizRoomId          Int
+  questionId          Int      @unique
+  answerDistribution  Json
+  averageResponseTime Float
+  participantCount    Int
+  answeredCount       Int
+  pendingCount        Int
+  question            Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  quizRoom            QuizRoom @relation(fields: [quizRoomId], references: [id], onDelete: Cascade)
+}
+
+model PreviousQuestionAnalytics {
+  id                  Int      @id @default(autoincrement())
+  quizRoomId          Int?
+  questionId          Int
+  questionOrder       Int
+  questionText        String
+  points              Int
+  answerDistribution  Json?
+  averageResponseTime Float
+  participantCount    Int
+  answeredCount       Int
+  correctCount        Int
+  wrongCount          Int
+  pendingCount        Int
+  createdAt           DateTime @default(now())
+  guessItRoomId       Int?
+  typeItRoomId        Int?
+
+  @@index([quizRoomId])
+  @@index([guessItRoomId])
+  @@index([typeItRoomId])
+}
+
+model PerformanceCard {
+  id                  Int         @id @default(autoincrement())
+  participantId       Int         @unique
+  totalScore          Int
+  finalRank           Int
+  accuracy            Float
+  averageResponseTime Float
+  participant         Participant @relation(fields: [participantId], references: [id], onDelete: Cascade)
+}
+
+model GuessItRoom {
+  id              Int               @id @default(autoincrement())
+  hostId          Int
+  title           String
+  desc            String
+  user_password   String
+  mod_password    String
+  isLocked        Boolean           @default(false)
+  currentQuestion Int               @default(0)
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  questions       GuessItQuestion[]
+  host            User              @relation("HostToGuessItRooms", fields: [hostId], references: [id])
+  participants    Participant[]
+  moderators      User[]            @relation("ModeratorToGuessItRooms")
+}
+
+model GuessItQuestion {
+  id                Int             @id @default(autoincrement())
+  guessItRoomId     Int
+  order             Int
+  text              String
+  imageUrl          String?
+  hints             Json
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+  acceptableAnswers CorrectAnswer[]
+  answers           GuessItAnswer[]
+  guessItRoom       GuessItRoom     @relation(fields: [guessItRoomId], references: [id], onDelete: Cascade)
+
+  @@unique([guessItRoomId, order])
+}
+
+model CorrectAnswer {
+  id                Int             @id @default(autoincrement())
+  guessItQuestionId Int
+  answer            String
+  guessItQuestion   GuessItQuestion @relation(fields: [guessItQuestionId], references: [id], onDelete: Cascade)
+
+  @@unique([guessItQuestionId, answer])
+}
+
+model GuessItAnswer {
+  id                Int             @id @default(autoincrement())
+  participantId     Int
+  guessItQuestionId Int
+  answer            String
+  isCorrect         Boolean
+  guessNumber       Int
+  hintsRevealed     Int             @default(0)
+  score             Int             @default(0)
+  createdAt         DateTime        @default(now())
+  guessItQuestion   GuessItQuestion @relation(fields: [guessItQuestionId], references: [id], onDelete: Cascade)
+  participant       Participant     @relation(fields: [participantId], references: [id], onDelete: Cascade)
+}
+
+model The100Room {
+  id              Int               @id @default(autoincrement())
+  hostId          Int
+  host            User              @relation("HostToThe100Rooms", fields: [hostId], references: [id])
+  title           String
+  desc            String
+  user_password   String
+  mod_password    String
+  isLocked        Boolean           @default(false)
+  currentQuestion Int               @default(0)
+  questions       The100Question[]
+  participants    Participant[]
+  moderators      User[]            @relation("ModeratorToThe100Rooms")
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+}
+
+model The100Question {
+  id            Int            @id @default(autoincrement())
+  the100RoomId  Int
+  the100Room    The100Room     @relation(fields: [the100RoomId], references: [id], onDelete: Cascade)
+  order         Int
+  text          String         @db.Text
+  imageUrl      String?
+  answers       The100Answer[]
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  @@unique([the100RoomId, order])
+}
+
+model The100Answer {
+  id                Int             @id @default(autoincrement())
+  participantId     Int
+  participant        Participant     @relation(fields: [participantId], references: [id], onDelete: Cascade)
+  the100QuestionId  Int
+  the100Question    The100Question  @relation(fields: [the100QuestionId], references: [id], onDelete: Cascade)
+  answer            String
+  status            String          @default("pending")
+  score             Int             @default(0)
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+}
+
+model TypeItRoom {
+  id              Int               @id @default(autoincrement())
+  hostId          Int
+  host            User              @relation("HostToTypeItRooms", fields: [hostId], references: [id])
+  title           String
+  desc            String
+  user_password   String
+  mod_password    String
+  isLocked        Boolean           @default(false)
+  currentQuestion Int               @default(0)
+  questions       TypeItQuestion[]
+  participants    Participant[]
+  moderators      User[]            @relation("ModeratorToTypeItRooms")
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+}
+
+model TypeItQuestion {
+  id                Int             @id @default(autoincrement())
+  typeItRoomId      Int
+  typeItRoom        TypeItRoom      @relation(fields: [typeItRoomId], references: [id], onDelete: Cascade)
+  order             Int
+  text              String
+  imageUrl          String?
+  correctAnswers    Json
+  points            Int             @default(100)
+  timeLimit         Int             @default(30)
+  explanation       String?
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+  answers           TypeItAnswer[]
+
+  @@unique([typeItRoomId, order])
+}
+
+model TypeItAnswer {
+  id                 Int             @id @default(autoincrement())
+  participantId      Int
+  participant        Participant     @relation(fields: [participantId], references: [id], onDelete: Cascade)
+  typeItQuestionId   Int
+  typeItQuestion     TypeItQuestion  @relation(fields: [typeItQuestionId], references: [id], onDelete: Cascade)
+  answer             String
+  isCorrect          Boolean
+  responseTime       Float
+  score              Int
+  createdAt          DateTime        @default(now())
+}
