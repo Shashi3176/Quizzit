@@ -34,16 +34,14 @@ export default function HomePage() {
             <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
             <span className="text-sm text-purple-300 font-medium">Real-time multiplayer quizzes</span>
           </div>
-
-          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold mb-4 sm:mb-6 leading-tight">
-            <span className="bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
-              Quiz App
+          <h1 className="flex items-center justify-center gap-4"> 
+            <div className='flex items-center justify-center'>               
+            <span className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
+              Quizzit
             </span>
-            <br />
-            <span className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl text-gray-300 font-bold">
-              Learn, Play, Compete
-            </span>
+            </div>            
           </h1>
+
           
           <p className="text-base sm:text-lg md:text-xl text-gray-400 max-w-xl md:max-w-2xl mb-8 sm:mb-10 leading-relaxed">
             Challenge your friends, test your knowledge, and climb the leaderboards.

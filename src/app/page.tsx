@@ -13,7 +13,7 @@ export default function HomePage() {
 
       <section className="flex flex-col items-center justify-center text-center py-24 px-4">
         <h1 className="text-5xl md:text-6xl font-extrabold mb-4 bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
-          Quiz App
+          Quizzit
         </h1>
         <p className="text-lg md:text-xl text-gray-300 max-w-2xl mb-8">
           Challenge your friends, test your knowledge, and climb the leaderboards.
@@ -111,4 +111,4 @@ export default function HomePage() {
       </section>
     </div>
   );
-}
+ }

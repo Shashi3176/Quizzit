@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Quiz App",
+  title: "Quizzit",
   description: "Challenge your friends, test your knowledge, and climb the leaderboards.",
 };
 
@@ -39,33 +39,14 @@ export default async function RootLayout({
           
           <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 relative">
             <div className="flex justify-between items-center h-16">
-              {/* Logo */}
-              <Link href="/" className="group relative flex items-center gap-3 py-2 px-3 -ml-3 rounded-xl transition-all duration-300 hover:bg-white/[0.03]">
-                {/* Logo Icon */}
-                <div className="relative">
-                  {/* Glow effect behind icon */}
-                  <div className="absolute inset-0 bg-purple-500/40 rounded-xl blur-lg opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                  
-                  <div className="relative w-10 h-10 bg-gradient-to-br from-purple-500 via-purple-600 to-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-purple-500/25 group-hover:shadow-purple-500/50 group-hover:scale-110 transition-all duration-300 border border-purple-400/20">
-                    <svg className="w-5 h-5 text-white drop-shadow-sm" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-                    </svg>
-                  </div>
-                </div>
-                
-                {/* Logo Text */}
-                <div className="flex flex-col">
-                  <span className="font-bold text-xl tracking-tight bg-gradient-to-r from-white via-white to-gray-300 bg-clip-text text-transparent group-hover:from-purple-200 group-hover:via-white group-hover:to-blue-200 transition-all duration-300">
-                    Quiz App
-                  </span>
-                  <span className="text-[10px] text-gray-500 font-medium tracking-wider uppercase group-hover:text-purple-400/70 transition-colors duration-300">
-                    Learn & Play
-                  </span>
-                </div>
-                
-                {/* Animated underline */}
-                <div className="absolute bottom-1 left-3 right-3 h-[2px] bg-gradient-to-r from-purple-500 to-blue-500 rounded-full scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
-              </Link>
+           {/* Logo */}
+           <Link href="/" className="group relative flex items-center gap-3 py-2 px-3 -ml-3 rounded-xl transition-all duration-300 hover:bg-white/[0.03]">
+             <div className="flex items-center">
+               <div className=" rounded-xl p-2 group-hover:scale-110 transition-transform duration-300">
+                 <img src="/logo.png" alt="Quiz App Logo" className="h-10 w-auto" />
+               </div>
+             </div>
+           </Link>
 
               {/* Auth Navigation */}
               <AuthNav />
@@ -96,12 +77,8 @@ export default async function RootLayout({
               {/* Brand Section */}
               <div>
                 <Link href="/" className="group inline-flex items-center gap-2 mb-4">
-                  <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-blue-600 rounded-xl flex items-center justify-center shadow-lg group-hover:shadow-purple-500/30 transition-shadow duration-300">
-                    <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-                    </svg>
-                  </div>
-                  <span className="font-bold text-xl text-white">Quiz App</span>
+                  <img src="/logo.png" alt="Quiz App Logo" className="h-10 w-auto group-hover:scale-110 transition-transform duration-300" />
+                  <span className="font-bold text-xl text-white">Quizzit</span>
                 </Link>
                 <p className="text-sm text-gray-500 leading-relaxed">
                   Create, join, and compete in real-time quizzes with friends. Challenge your knowledge and climb the leaderboards.

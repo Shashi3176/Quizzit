@@ -1,5 +1,11 @@
 
 import PerformanceCard from '@/components/PerformanceCard';
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Profile",
+  description: "View your Quiz App profile and performance stats",
+};
 
 export default function PerformancePage() {
   return (
